@@ -14,6 +14,12 @@ export class MainScene extends Phaser.Scene {
                 this.holding = null;
             }
         }, this);
+
+        this.input.on('pointerdown', function(pointer) {
+            if (this.ba.inBounds(pointer.worldX, pointer.worldY)) {
+                this.holding = this.ba.grab(pointer.worldX, pointer.worldY);
+            }
+        }, this)
         
 
         this.room = this.add.existing(new AvailableRoom(this, 800, 500, 'room', 2));
@@ -99,6 +105,15 @@ class BuildingArea {
             this.array[gx][gy] = room;
         } else {
             room.destroy();
+        }
+    }
+    grab(x, y) {
+        if (this.inBounds(x, y)) {
+            let gx = this.gridX(x);
+            let gy = this.gridY(y);
+            let room = this.array[gx][gy];
+            this.array[gx][gy] = null;
+            return room;
         }
     }
     get(x, y) {
