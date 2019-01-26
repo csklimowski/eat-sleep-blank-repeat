@@ -1,9 +1,30 @@
  <!DOCTYPE html>
  <html>
      <head>
-         <meta charset="utf-8">
+         <script src="build/project.bundle.js" charset="utf-8"></script>
      </head>
      <body>
-         <script src="build/project.bundle.js" charset="utf-8"></script>
+         <div id="game"></div>
      </body>
  </html>
+ <style>
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+#game {
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: #000;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+}
+ </style>
