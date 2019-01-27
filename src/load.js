@@ -1,4 +1,6 @@
 import 'phaser';
+import { levels } from './levels';
+import game from './index';
 
 export class LoadScene extends Phaser.Scene {
     constructor() {
@@ -8,6 +10,11 @@ export class LoadScene extends Phaser.Scene {
     }
 
     preload() {
+        this.load.image('level1-intro1', 'assets/level1-intro1.png');
+
+
+        this.load.image('title-screen', 'assets/title-screen.png');
+        this.load.image('black', 'assets/black.png');
         this.load.image('hallway', 'assets/hallway.png');
         this.load.image('hallway-bg', 'assets/hallway-bg.png');
         this.load.image('hallway-fg', 'assets/hallway-fg.png');
@@ -35,6 +42,7 @@ export class LoadScene extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start('MainState');
+        game.level = levels[0];
+        this.scene.start('TitleScene');
     }
 }

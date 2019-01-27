@@ -14,6 +14,8 @@ export class AvailableRoom {
             this.background = scene.add.sprite(x, y, 'kitchen');
             this.foreground = scene.add.sprite(x, y, 'kitchen');
         }
+        scene.supply.add(this.background);
+        scene.supply.add(this.foreground);
         if (entity) {
             this.entity = entity;
         }
@@ -21,6 +23,7 @@ export class AvailableRoom {
             this.counter = scene.add.text(x, y, String(count), {
                 fontFamily: 'Arial', fontSize: 64, color: '#ffffff'
             });
+            scene.supply.add(this.counter);
             this.count = count;
         } else {
             this.count = null;
