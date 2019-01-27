@@ -13,16 +13,28 @@ export class LoadScene extends Phaser.Scene {
         this.load.image('level1-intro1', 'assets/level1-intro1.png');
         this.load.image('level1-failure1', 'assets/level1-failure1.png');
         this.load.image('level1-success1', 'assets/level1-success1.png');
+
         this.load.image('title-screen', 'assets/title-screen.png');
         this.load.image('black', 'assets/black.png');
-        this.load.image('hallway', 'assets/hallway.png');
+        this.load.image('highlight', 'assets/highlight.png');
+        this.load.spritesheet('button', 'assets/button.png', {
+            frameWidth: 128,
+            frameHeight: 64
+        });
+
+        this.load.image('background', 'assets/background.png');
+        this.load.image('supply', 'assets/supply.png');
+
+        
         this.load.image('hallway-bg', 'assets/hallway-bg.png');
         this.load.image('hallway-fg', 'assets/hallway-fg.png');
-        this.load.image('bedroom', 'assets/bedroom.png');
+
         this.load.image('kitchen', 'assets/bathroom.png');
+        this.load.image('garden', 'assets/hallway.png');
+        this.load.image('fortnite', 'assets/fortnite.png');
+
         this.load.image('blank-room', 'assets/blank-room.png');
-        this.load.image('room', 'assets/room.png');
-        this.load.image('highlight', 'assets/highlight.png');
+
         this.load.spritesheet('bedroom-fg', 'assets/bedroom-fg.png', {
             frameWidth: 128,
             frameHeight: 128
@@ -31,18 +43,16 @@ export class LoadScene extends Phaser.Scene {
             frameWidth: 128,
             frameHeight: 128
         });
+
         this.load.spritesheet('person', 'assets/person.png', {
             frameWidth: 64,
             frameHeight: 64
         });
-        this.load.spritesheet('button', 'assets/button.png', {
-            frameWidth: 128,
-            frameHeight: 64
-        });
+        
     }
 
     create() {
-        game.level = 0;
+        game.level = 2;
         this.scene.start('TitleScene');
     }
 }

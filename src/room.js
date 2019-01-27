@@ -3,16 +3,22 @@ import { Entity } from './entity';
 export class AvailableRoom {
     constructor(scene, x, y, type, entity, count) {
         if (type === 'hallway') {
-            this.background = scene.add.sprite(x, y, 'hallway-bg');
-            this.foreground = scene.add.sprite(x, y, 'hallway-fg');
+            this.background = scene.add.image(x, y, 'hallway-bg');
+            this.foreground = scene.add.image(x, y, 'hallway-fg');
         } else if (type === 'bedroom1' || type === 'bedroom2') {
-            this.background = scene.add.sprite(x, y, 'bedroom-bg');
-            this.foreground = scene.add.sprite(x, y, 'bedroom-fg');
+            this.background = scene.add.image(x, y, 'bedroom-bg');
+            this.foreground = scene.add.image(x, y, 'bedroom-fg');
             this.background.setFrame(1);
             this.foreground.setFrame(1);
         } else if (type === 'kitchen') {
-            this.background = scene.add.sprite(x, y, 'kitchen');
-            this.foreground = scene.add.sprite(x, y, 'kitchen');
+            this.background = scene.add.image(x, y, 'kitchen');
+            this.foreground = scene.add.image(x, y, 'kitchen');
+        } else if (type === 'fortnite') {
+            this.background = scene.add.image(x, y, 'fortnite');
+            this.foreground = scene.add.image(x, y, 'fortnite');
+        } else if (type === 'garden') {
+            this.background = scene.add.image(x, y, 'garden');
+            this.foreground = scene.add.image(x, y, 'garden');
         }
         scene.supply.add(this.background);
         scene.supply.add(this.foreground);
@@ -60,14 +66,20 @@ class Room {
     constructor(scene, x, y, type, entity, supply) {
         this.type = type;
         if (type === 'hallway') {
-            this.background = scene.add.sprite(x, y, 'hallway-bg');
-            this.foreground = scene.add.sprite(x, y, 'hallway-fg');
+            this.background = scene.add.image(x, y, 'hallway-bg');
+            this.foreground = scene.add.image(x, y, 'hallway-fg');
         } else if (type === 'bedroom1' || type === 'bedroom2') {
-            this.background = scene.add.sprite(x, y, 'bedroom-bg');
-            this.foreground = scene.add.sprite(x, y, 'bedroom-fg');
+            this.background = scene.add.image(x, y, 'bedroom-bg');
+            this.foreground = scene.add.image(x, y, 'bedroom-fg');
         } else if (type === 'kitchen') {
-            this.background = scene.add.sprite(x, y, 'kitchen');
-            this.foreground = scene.add.sprite(x, y, 'blank-room');
+            this.background = scene.add.image(x, y, 'kitchen');
+            this.foreground = scene.add.image(x, y, 'blank-room');
+        } else if (type === 'fortnite') {
+            this.background = scene.add.image(x, y, 'fortnite');
+            this.foreground = scene.add.image(x, y, 'blank-room');
+        } else if (type === 'garden') {
+            this.background = scene.add.image(x, y, 'garden');
+            this.foreground = scene.add.image(x, y, 'blank-room');
         }
         scene.backgrounds.add(this.background);
         scene.foregrounds.add(this.foreground);

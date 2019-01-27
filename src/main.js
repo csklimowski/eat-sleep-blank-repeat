@@ -18,13 +18,16 @@ export class MainScene extends Phaser.Scene {
         this.input.keyboard.on('keydown_R', function() {
             this.scene.restart();
         }, this);
-        this.ba = new BuildingArea(100, 0);
+        this.ba = new BuildingArea(85, 70);
         
         this.input.on('pointerup', this.pointerUp, this);
         this.input.on('pointerdown', this.pointerDown, this);
+
+        this.background = this.add.image(1280/2, 720/2, 'background');
         
         this.supply = this.add.container(0, 0);
         this.supply.targetX = 400;
+        this.supply.add(this.add.image(1000, 720/2, 'supply'));
         
         this.backgrounds = this.add.container(0, 0);
         this.entities = this.add.container(0, 0);
@@ -59,6 +62,19 @@ export class MainScene extends Phaser.Scene {
         this.startMode('textMode');
     }
 
+    padEntities() {
+        if (this.entities.length > 1) {
+            let e1 = this.entities.getAt(0);
+            let e2 = this.entities.getAt(1);
+            if (e1.steps.length > e2.steps.length) {
+                e2.padTo(e1.steps.length);
+            }
+            if (e2.steps.length > e1.steps.length) {
+                e1.padTo(e2.steps.length);
+            }
+        }
+    }
+
     startMode(mode) {
         this.entities.each(function(entity) {
             entity.gx = entity.room.gx;
@@ -70,9 +86,19 @@ export class MainScene extends Phaser.Scene {
         }, this);
         if (mode === 'playbackMode') {
             this.button.setFrame(1);
+
             this.entities.each(function(entity) {
-                entity.makeSteps(this.ba);
+                entity.init();
             }, this);
+            this.entities.each(function(entity) {
+                entity.makeCycle(this.ba, ['n', 'e', 's', 'w']);
+            }, this);
+            this.padEntities();
+            this.entities.each(function(entity) {
+                entity.makeCycle(this.ba, ['w', 's', 'e', 'n']);
+            }, this);
+            this.padEntities();
+
             this.stepLoop = this.time.addEvent({
                 callback: this.step,
                 delay: 500,
@@ -88,7 +114,7 @@ export class MainScene extends Phaser.Scene {
         } else if (mode === 'textMode') {
             this.button.setFrame(0);
             this.textIndex = -1;
-            this.supply.targetX = 400;
+            this.supply.targetX = 600;
             if (this.stepLoop) {
                 this.stepLoop.destroy();
             }
