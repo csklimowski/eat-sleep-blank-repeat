@@ -26,8 +26,8 @@ export class AvailableRoom {
             this.entity = entity;
         }
         if (count) {
-            this.counter = scene.add.text(x, y, String(count), {
-                fontFamily: 'Arial', fontSize: 64, color: '#ffffff'
+            this.counter = scene.add.text(x-55, y-60, String(count), {
+                fontFamily: 'Arial', fontSize: 32, color: '#ffffff'
             });
             scene.supply.add(this.counter);
             this.count = count;

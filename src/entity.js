@@ -21,30 +21,34 @@ const directions = {
 
 export class Entity extends Phaser.GameObjects.Sprite {
     constructor(scene, room, x, y, entity) {
-        super(scene, x, y, 'person');
         if (entity === 'granny') {
+            super(scene, x, y, 'granny-wake');
             this.behavior = [
                 'kitchen',
                 'bedroom1'
             ];
         } else if (entity === 'buffgranny') {
+            super(scene, x, y, 'granny-wake');
             this.behavior = [
                 'kitchen',
                 'bedroom1'
             ];
         } else if (entity === 'gamer') {
+            super(scene, x, y, 'gamer-wake');
             this.behavior = [
                 'kitchen',
                 'fortnite',
                 'bedroom1'
             ];
         } else if (entity === 'husband1') {
+            super(scene, x, y, 'husband1-wake');
             this.behavior = [
                 'kitchen',
                 'fortnite',
                 'bedroom1'
             ];
         } else if (entity === 'husband2') {
+            super(scene, x, y, 'husband2-wake');
             this.behavior = [
                 'kitchen',
                 'garden',
@@ -79,6 +83,10 @@ export class Entity extends Phaser.GameObjects.Sprite {
             x: gx,
             y: gy,
             action: 'wake'
+        }, {
+            x: gx,
+            y: gy,
+            action: 'nothing'
         });
         for (let destination of this.behavior) {
             let notes = [
@@ -122,11 +130,11 @@ export class Entity extends Phaser.GameObjects.Sprite {
             if (destNode) {
                 let actions = [];
                 if (destNode.room.type === 'bedroom1' || destNode.room.type === 'bedroom2') {
-                    actions = ['sleep'];
+                    actions = ['sleep', 'nothing'];
                 } else if (destNode.room.type === 'kitchen') {
                     actions = ['eat'];
                 } else if (destNode.room.type === 'fortnite') {
-                    actions = ['sit', 'stand'];
+                    actions = ['sit', 'nothing', 'stand'];
                 } else if (destNode.room.type === 'garden') {
                     actions = ['water'];
                 }
@@ -190,22 +198,25 @@ export class Entity extends Phaser.GameObjects.Sprite {
 
             if (step.action === 'sleep') {
                 this.cycles++;
-                this.setFrame(1);
                 this.room.background.setFrame(0);
                 this.room.foreground.setFrame(0);
+                this.anims.play(this.type + '-sleep');
             } else if (step.action === 'wake') {
                 this.wateredToday = false;
-                this.setFrame(0);
                 this.room.background.setFrame(1);
                 this.room.foreground.setFrame(1);
+                this.anims.play(this.type + '-wake');
             } else if (step.action === 'water') {
+                this.anims.play(this.type + '-water');
                 this.wateredToday = true;
             } else if (step.action === 'sit') {
-                
+                this.anims.play(this.type + '-sit');
             } else if (step.action === 'stand') {
-
+                this.anims.play(this.type + '-stand');
             } else if (step.action === 'eat') {
-
+                this.anims.play(this.type + '-eat');
+            } else if (step.action === 'move') {
+                this.anims.play(this.type + '-walk');
             }
 
             if (step.action === 'confusion') {
@@ -218,9 +229,9 @@ export class Entity extends Phaser.GameObjects.Sprite {
 
     update(time, delta) {
         this.t += delta;
-        if (this.t <= 250) {
-            this.x = this.x0 + (this.t / 250) * (this.xf - this.x0);
-            this.y = this.y0 + (this.t / 250) * (this.yf - this.y0);
+        if (this.t <= 500) {
+            this.x = this.x0 + (this.t / 500) * (this.xf - this.x0);
+            this.y = this.y0 + (this.t / 500) * (this.yf - this.y0);
         }
     }
 }

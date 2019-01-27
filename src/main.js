@@ -14,7 +14,6 @@ export class MainScene extends Phaser.Scene {
     }
 
     create() {
-
         this.input.keyboard.on('keydown_R', function() {
             this.scene.restart();
         }, this);
@@ -83,10 +82,11 @@ export class MainScene extends Phaser.Scene {
             entity.y = entity.room.y;
             entity.room.foreground.setFrame(0);
             entity.room.background.setFrame(0);
+            entity.anims.stop();
+            entity.setTexture(entity.type + '-wake');
         }, this);
         if (mode === 'playbackMode') {
             this.button.setFrame(1);
-
             this.entities.each(function(entity) {
                 entity.init();
             }, this);
@@ -101,7 +101,7 @@ export class MainScene extends Phaser.Scene {
 
             this.stepLoop = this.time.addEvent({
                 callback: this.step,
-                delay: 500,
+                delay: 1000,
                 callbackScope: this,
                 loop: true
             });
@@ -189,7 +189,7 @@ export class MainScene extends Phaser.Scene {
                 this.startMode('buildMode');
             }
         } else {
-            this.textBox.targetY = 500;
+            this.textBox.targetY = 400;
             this.textBox.setTexture(levels[game.level][this.textSet][this.textIndex]);
         }
     }
