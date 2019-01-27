@@ -3,6 +3,7 @@ import game from './index';
 import { Entity } from './entity';
 import { AvailableRoom } from './room';
 import { BuildingArea } from './buildingArea';
+import { levels } from './levels';
 
 export class MainScene extends Phaser.Scene {
 
@@ -13,44 +14,48 @@ export class MainScene extends Phaser.Scene {
     }
 
     create() {
+
+        this.input.keyboard.on('keydown_R', function() {
+            this.scene.restart();
+        }, this);
         this.ba = new BuildingArea(100, 0);
-        this.holding = null;
+        
         this.input.on('pointerup', this.pointerUp, this);
         this.input.on('pointerdown', this.pointerDown, this);
-
+        
         this.supply = this.add.container(0, 0);
         this.supply.targetX = 400;
+        
         this.backgrounds = this.add.container(0, 0);
         this.entities = this.add.container(0, 0);
         this.foregrounds = this.add.container(0, 0);
+        
         this.highlight = this.add.sprite(0, 0, 'highlight');
         this.highlight.alpha = 0;
+        
         this.button = this.add.sprite(1100, 50, 'button');
         this.button.setInteractive();
         this.button.on('pointerdown', function() {
             if (this.mode === 'buildMode') {
-                this.button.setFrame(1);
                 this.startMode('playbackMode');
             } else if (this.mode === 'playbackMode') {
-                this.button.setFrame(0);
                 this.startMode('buildMode');
             }
         }, this);
         this.supply.add(this.button);
-
-        this.add.existing(new AvailableRoom(this, 1000, 200, 'hallway', null));
-        this.add.existing(new AvailableRoom(this, 1000, 400, 'bedroom1', 'person', 1));
-        this.add.existing(new AvailableRoom(this, 1000, 600, 'kitchen', null, 1));
-
+        
         this.textBox = this.add.image(1280/2, 800, 'blank-room');
         this.textBox.targetY = 800;
         
         this.cameras.main.setBackgroundColor(0x444444);
-
+        
+        levels[game.level].init(this);
+        
         this.fade = this.add.image(1280/2, 720/2, 'black');
-
-        this.textSet = 'introText';
+        
+        this.holding = null;
         this.textIndex = -1;
+        this.textSet = 'intro';
         this.startMode('textMode');
     }
 
@@ -64,6 +69,7 @@ export class MainScene extends Phaser.Scene {
             entity.room.background.setFrame(0);
         }, this);
         if (mode === 'playbackMode') {
+            this.button.setFrame(1);
             this.entities.each(function(entity) {
                 entity.makeSteps(this.ba);
             }, this);
@@ -74,18 +80,32 @@ export class MainScene extends Phaser.Scene {
                 loop: true
             });
         } else if (mode === 'buildMode') {
+            this.button.setFrame(0);
             this.supply.targetX = 0;
             if (this.stepLoop) {
                 this.stepLoop.destroy();
             }
         } else if (mode === 'textMode') {
+            this.button.setFrame(0);
             this.textIndex = -1;
             this.supply.targetX = 400;
+            if (this.stepLoop) {
+                this.stepLoop.destroy();
+            }
         }
         this.mode = mode;
     }
 
     step() {
+        if (levels[game.level].checkFailState(this.ba, this.entities)) {
+            this.startMode('textMode');
+            this.textSet = 'failure';
+            this.nextText();
+        } else if (levels[game.level].checkSuccessState(this.ba, this.entities)) {
+            this.startMode('textMode');
+            this.textSet = 'success';
+            this.nextText();
+        }
         this.entities.each(function(entity) {
             entity.nextStep(this.ba);
         }, this);
@@ -116,6 +136,10 @@ export class MainScene extends Phaser.Scene {
             this.fade.alpha -= 0.001*delta;
         } else if (this.mode === 'outroMode') {
             this.fade.alpha += 0.001*delta;
+            if (this.fade.alpha >= 1) {
+                game.level++;
+                this.scene.restart();
+            }
         }
         this.textBox.y += 0.01*(this.textBox.targetY - this.textBox.y)*delta;
         this.supply.x += 0.01*(this.supply.targetX - this.supply.x)*delta;
@@ -125,15 +149,22 @@ export class MainScene extends Phaser.Scene {
         if (this.mode === 'buildMode' && !this.holding && this.ba.inBounds(pointer.worldX, pointer.worldY)) {
             this.holding = this.ba.grab(pointer.worldX, pointer.worldY);
         } else if (this.mode === 'textMode') {
-            this.textIndex++;
-            if (this.textIndex >= game.level[this.textSet].length) {
-                this.textBox.targetY = 1000;
-                this.startMode('buildMode');
-                this.textIndex = -1;
+            this.nextText();
+        }
+    }
+
+    nextText() {
+        this.textIndex++;
+        if (this.textIndex >= levels[game.level][this.textSet].length) {
+            this.textBox.targetY = 1000;
+            if (this.textSet === 'success') {
+                this.startMode('outroMode');
             } else {
-                this.textBox.targetY = 500;
-                this.textBox.setTexture(game.level[this.textSet][this.textIndex]);
+                this.startMode('buildMode');
             }
+        } else {
+            this.textBox.targetY = 500;
+            this.textBox.setTexture(levels[game.level][this.textSet][this.textIndex]);
         }
     }
 
