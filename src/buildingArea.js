@@ -1,3 +1,5 @@
+import game from './index';
+
 export class BuildingArea {
     constructor(x, y) {
         this.array = [
@@ -29,7 +31,9 @@ export class BuildingArea {
             this.array[gx][gy] = room;
             room.gx = gx;
             room.gy = gy;
+            game.sfx.place.play();
         } else {
+            game.sfx.trash.play();
             room.destroy();
         }
     }
@@ -39,6 +43,7 @@ export class BuildingArea {
             let gy = this.gridY(y);
             let room = this.array[gx][gy];
             this.array[gx][gy] = null;
+            game.sfx.pickUp.play();
             return room;
         }
     }

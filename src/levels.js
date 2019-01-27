@@ -22,14 +22,13 @@ export const levels = [
             }
         },
         intro: [
-            'level1-intro1'
+            'granny-intro',
+            'how-to'
         ],
         failure: [
-            'level1-failure1'
+            'granny-fail'
         ],
-        success: [
-            'level1-success1'
-        ]
+        success: []
     },
     {
         init: function(scene) {
@@ -52,14 +51,12 @@ export const levels = [
             }
         },
         intro: [
-            'level1-intro1'
+            'gg-intro'
         ],
         failure: [
-            'level1-failure1'
+            'gg-fail'
         ],
-        success: [
-            'level1-success1'
-        ]
+        success: []
     },
     {
         init: function(scene) {
@@ -85,14 +82,12 @@ export const levels = [
             } else return false;
         },
         intro: [
-            'level1-intro1'
+            'roommates-intro'
         ],
         failure: [
-            'level1-failure1'
+            'roommates-fail'
         ],
-        success: [
-            'level1-success1'
-        ]
+        success: []
     },
     {
         init: function(scene) {
@@ -110,13 +105,11 @@ export const levels = [
             return granny.cycles >= 2;
         },
         intro: [
-            'level1-intro1'
+            'granny2-intro'
         ],
         failure: [
-            'level1-failure1'
+            'granny2-fail'
         ],
-        success: [
-            'level1-success1'
-        ]
+        success: []
     }
 ]

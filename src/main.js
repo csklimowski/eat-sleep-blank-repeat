@@ -1,4 +1,3 @@
-import 'phaser';
 import game from './index';
 import { Entity } from './entity';
 import { AvailableRoom } from './room';
@@ -35,9 +34,11 @@ export class MainScene extends Phaser.Scene {
         this.highlight = this.add.sprite(0, 0, 'highlight');
         this.highlight.alpha = 0;
         
-        this.button = this.add.sprite(1100, 50, 'button');
+        this.button = this.add.sprite(1000, 100, 'button');
+        this.button.setFrame(1);
         this.button.setInteractive();
         this.button.on('pointerdown', function() {
+            game.sfx.click.play();
             if (this.mode === 'buildMode') {
                 this.startMode('playbackMode');
             } else if (this.mode === 'playbackMode') {
@@ -45,7 +46,20 @@ export class MainScene extends Phaser.Scene {
             }
         }, this);
         this.supply.add(this.button);
-        
+
+        this.graphics = this.add.graphics({
+            lineStyle: {
+                width: 2,
+                color: 0x000000
+            }
+        })
+
+        this.crane = this.add.image(0, 0, 'crane');
+        this.crane.alpha = 0;
+
+        this.hook = this.add.image(0, 0, 'hook');
+        this.hook.alpha = 0;
+
         this.textBox = this.add.image(1280/2, 800, 'blank-room');
         this.textBox.targetY = 800;
         
@@ -59,6 +73,8 @@ export class MainScene extends Phaser.Scene {
         this.textIndex = -1;
         this.textSet = 'intro';
         this.startMode('textMode');
+
+        game.sfx.music[game.level].play();
     }
 
     padEntities() {
@@ -86,7 +102,9 @@ export class MainScene extends Phaser.Scene {
             entity.setTexture(entity.type + '-wake');
         }, this);
         if (mode === 'playbackMode') {
-            this.button.setFrame(1);
+            this.crane.alpha = 0;
+            this.hook.alpha = 0;
+            this.button.setFrame(2);
             this.backgrounds.each(function(background) {
                 background.room.waterings = 0;
             }, this);
@@ -109,18 +127,24 @@ export class MainScene extends Phaser.Scene {
                 loop: true
             });
         } else if (mode === 'buildMode') {
-            this.button.setFrame(0);
+            this.crane.alpha = 1;
+            this.hook.alpha = 1;
+            this.button.setFrame(1);
             this.supply.targetX = 0;
             if (this.stepLoop) {
                 this.stepLoop.destroy();
             }
         } else if (mode === 'textMode') {
-            this.button.setFrame(0);
+            this.crane.alpha = 0;
+            this.hook.alpha = 0;
+            this.button.setFrame(1);
             this.textIndex = -1;
             this.supply.targetX = 600;
             if (this.stepLoop) {
                 this.stepLoop.destroy();
             }
+        } else if (mode === 'outroMode') {
+            game.sfx.music[game.level].stop();
         }
         this.mode = mode;
     }
@@ -141,6 +165,7 @@ export class MainScene extends Phaser.Scene {
     }
 
     update(time, delta) {
+        this.graphics.clear();
         if (this.mode === 'buildMode') {
             let mouseX = this.input.activePointer.worldX;
             let mouseY = this.input.activePointer.worldY;
@@ -149,6 +174,11 @@ export class MainScene extends Phaser.Scene {
             if (this.holding) {
                 this.holding.moveTo(mouseX, mouseY);
             }
+
+            this.hook.x = mouseX;
+            this.hook.y = mouseY;
+            this.crane.x = mouseX;
+            this.graphics.lineBetween(this.hook.x, this.hook.y, this.crane.x, this.crane.y);
     
             if (ba.inBounds(mouseX, mouseY)) {
                 this.highlight.alpha = 1;
@@ -192,7 +222,7 @@ export class MainScene extends Phaser.Scene {
                 this.startMode('buildMode');
             }
         } else {
-            this.textBox.targetY = 400;
+            this.textBox.targetY = 360;
             this.textBox.setTexture(levels[game.level][this.textSet][this.textIndex]);
         }
     }

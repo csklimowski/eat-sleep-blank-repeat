@@ -1,4 +1,3 @@
-import 'phaser';
 import { levels } from './levels';
 import game from './index';
 
@@ -10,28 +9,48 @@ export class LoadScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('level1-intro1', 'assets/level1-intro1.png');
-        this.load.image('level1-failure1', 'assets/level1-failure1.png');
-        this.load.image('level1-success1', 'assets/level1-success1.png');
+        this.load.audio('level1', 'Grandma_Build.ogg');
+        this.load.audio('level2', 'Garden_Build.ogg');
+        this.load.audio('level3', 'Roommates_Build.ogg');
+        this.load.audio('level4', 'Spicy_Granny.ogg');
+        this.load.audio('pick-up', 'assets/SoundEffects/Pick_Up_Block.ogg');
+        this.load.audio('place', 'assets/SoundEffects/Place_Block.ogg');
+        this.load.audio('click', 'assets/SoundEffects/menu_click_wave.ogg');
+        this.load.audio('trash', 'assets/SoundEffects/Trash_Block.ogg');
+
+        this.load.image('gg-intro', 'assets/portriats/gg-intro.png');
+        this.load.image('gg-fail', 'assets/portriats/gg-fail.png');
+        this.load.image('granny-intro', 'assets/portriats/granny-intro.png');
+        this.load.image('granny-fail', 'assets/portriats/granny-fail.png');
+        this.load.image('roommates-intro', 'assets/portriats/roommates-intro.png');
+        this.load.image('roommates-fail', 'assets/portriats/roommates-fail.png');
+        this.load.image('granny2-intro', 'assets/portriats/granny2-intro.png');
+        this.load.image('granny2-fail', 'assets/portriats/granny2-fail.png');
 
         this.load.image('title-screen', 'assets/title-screen.png');
+        this.load.image('how-to', 'assets/how-to.jpg');
         this.load.image('black', 'assets/black.png');
         this.load.image('highlight', 'assets/highlight.png');
-        this.load.spritesheet('button', 'assets/button.png', {
-            frameWidth: 128,
-            frameHeight: 64
+        this.load.spritesheet('button', 'assets/PlayPause.png', {
+            frameWidth: 305,
+            frameHeight: 71
         });
 
         this.load.image('background', 'assets/background.png');
         this.load.image('supply', 'assets/supply.png');
+        this.load.image('crane', 'assets/Crane.png');
+        this.load.image('hook', 'assets/hook.png');
 
-        
         this.load.image('hallway-bg', 'assets/hallway-bg.png');
         this.load.image('hallway-fg', 'assets/hallway-fg.png');
 
-        this.load.image('kitchen', 'assets/bathroom.png');
-        this.load.image('garden', 'assets/hallway.png');
-        this.load.image('fortnite', 'assets/fortnite.png');
+        this.load.image('kitchen', 'assets/kitchen.png');
+
+        this.load.image('fortnite-bg', 'assets/gameroom-bg.png');
+        this.load.image('fortnite-fg', 'assets/gameroom-fg.png');
+
+        this.load.image('garden-fg', 'assets/garden-fg.png');
+        this.load.image('garden-bg', 'assets/garden-bg.png');
 
         this.load.image('blank-room', 'assets/blank-room.png');
 
@@ -308,7 +327,20 @@ export class LoadScene extends Phaser.Scene {
             frameRate: 14
         });
 
-        game.level = 3;
+        game.sfx = {
+            music: [
+                this.sound.add('level1', { volume: 0.3, loop: true }),
+                this.sound.add('level2', { volume: 0.2, loop: true }),
+                this.sound.add('level3', { volume: 0.3, loop: true }),
+                this.sound.add('level4', { volume: 0.3, loop: true }),
+            ],
+            pickUp: this.sound.add('pick-up'),
+            place: this.sound.add('place'),
+            click: this.sound.add('click'),
+            trash: this.sound.add('trash')
+        }
+
+        game.level = 0;
         this.scene.start('TitleScene');
     }
 }

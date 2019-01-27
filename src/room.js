@@ -1,4 +1,5 @@
 import { Entity } from './entity';
+import game from './index';
 
 export class AvailableRoom {
     constructor(scene, x, y, type, entity, count) {
@@ -12,13 +13,13 @@ export class AvailableRoom {
             this.foreground.setFrame(1);
         } else if (type === 'kitchen') {
             this.background = scene.add.image(x, y, 'kitchen');
-            this.foreground = scene.add.image(x, y, 'kitchen');
+            this.foreground = scene.add.image(x, y, 'blank-room');
         } else if (type === 'fortnite') {
-            this.background = scene.add.image(x, y, 'fortnite');
-            this.foreground = scene.add.image(x, y, 'fortnite');
+            this.background = scene.add.image(x, y, 'fortnite-bg');
+            this.foreground = scene.add.image(x, y, 'fortnite-fg');
         } else if (type === 'garden') {
-            this.background = scene.add.image(x, y, 'garden');
-            this.foreground = scene.add.image(x, y, 'garden');
+            this.background = scene.add.image(x, y, 'garden-bg');
+            this.foreground = scene.add.image(x, y, 'garden-fg');
         }
         scene.supply.add(this.background);
         scene.supply.add(this.foreground);
@@ -41,6 +42,7 @@ export class AvailableRoom {
             if (this.scene.mode === 'buildMode' && !this.scene.holding) {
                 if (this.count !== 0) {
                     this.scene.holding = new Room(this.scene, pointer.worldX, pointer.worldY, this.type, this.entity, this);
+                    game.sfx.pickUp.play();
                     this.decreaseCounter();
                 }
             }
@@ -75,11 +77,11 @@ class Room {
             this.background = scene.add.image(x, y, 'kitchen');
             this.foreground = scene.add.image(x, y, 'blank-room');
         } else if (type === 'fortnite') {
-            this.background = scene.add.image(x, y, 'fortnite');
-            this.foreground = scene.add.image(x, y, 'blank-room');
+            this.background = scene.add.image(x, y, 'fortnite-bg');
+            this.foreground = scene.add.image(x, y, 'fortnite-fg');
         } else if (type === 'garden') {
-            this.background = scene.add.image(x, y, 'garden');
-            this.foreground = scene.add.image(x, y, 'blank-room');
+            this.background = scene.add.image(x, y, 'garden-bg');
+            this.foreground = scene.add.image(x, y, 'garden-fg');
         }
         scene.backgrounds.add(this.background);
         scene.foregrounds.add(this.foreground);

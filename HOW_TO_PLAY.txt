@@ -1,0 +1,7 @@
+1. With Node.js installed, run `npm install` in the root directory.
+2. Run `npm start` to bundle the JavaScript
+3. Visit localhost:8000 in your browser to play!
+
+OR
+
+Play it at chrisklimowski.com/secret/sleep-eat-blank-repeat/

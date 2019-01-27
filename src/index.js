@@ -1,4 +1,3 @@
-import 'phaser';
 import { MainScene } from './main';
 import { LoadScene } from './load';
 import { TitleScene } from './title';

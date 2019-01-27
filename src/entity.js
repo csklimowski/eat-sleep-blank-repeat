@@ -1,5 +1,3 @@
-
-
 const directions = {
     n: {
         dx: 0,
@@ -216,7 +214,6 @@ export class Entity extends Phaser.GameObjects.Sprite {
                 garden.waterings++;
                 if (garden.waterings > this.cycles + 1) {
                     this.waterings += 2;
-                    console.log('overwatered!');
                 }
             } else if (step.action === 'sit') {
                 this.anims.play(this.type + '-sit');
