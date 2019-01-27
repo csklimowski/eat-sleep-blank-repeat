@@ -11,8 +11,8 @@ export class LoadScene extends Phaser.Scene {
 
     preload() {
         this.load.image('level1-intro1', 'assets/level1-intro1.png');
-
-
+        this.load.image('level1-failure1', 'assets/level1-failure1.png');
+        this.load.image('level1-success1', 'assets/level1-success1.png');
         this.load.image('title-screen', 'assets/title-screen.png');
         this.load.image('black', 'assets/black.png');
         this.load.image('hallway', 'assets/hallway.png');
@@ -42,7 +42,7 @@ export class LoadScene extends Phaser.Scene {
     }
 
     create() {
-        game.level = levels[0];
+        game.level = 0;
         this.scene.start('TitleScene');
     }
 }

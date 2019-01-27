@@ -1,8 +1,8 @@
 
 export class Entity extends Phaser.GameObjects.Sprite {
     constructor(scene, room, x, y, entity) {
-        super(scene, x, y, entity);
-        if (entity === 'person') {
+        super(scene, x, y, 'person');
+        if (entity === 'granny') {
             this.behavior = [
                 'kitchen',
                 'bedroom1'
@@ -91,6 +91,8 @@ export class Entity extends Phaser.GameObjects.Sprite {
                 let actions = [];
                 if (destNode.room.type === 'bedroom1' || destNode.room.type === 'bedroom2') {
                     actions = ['sleep'];
+                } else if (destNode.room.type === 'kitchen') {
+                    actions = ['eat'];
                 }
                 gx = destNode.x;
                 gy = destNode.y;
@@ -120,7 +122,7 @@ export class Entity extends Phaser.GameObjects.Sprite {
 
     nextStep(ba) {
         if (this.steps.length) {
-            let step = this.steps[this.step];
+            let step = this.steps[this.step % this.steps.length];
             this.gx = step.x;
             this.gy = step.y;
 
@@ -142,7 +144,7 @@ export class Entity extends Phaser.GameObjects.Sprite {
                 this.setFrame(0);
             }
 
-            this.step = (this.step + 1) % this.steps.length;
+            this.step = (this.step + 1);
         }
     }
 
