@@ -28,9 +28,12 @@ export class Entity extends Phaser.GameObjects.Sprite {
                 'bedroom1'
             ];
         } else if (entity === 'buffgranny') {
+            entity = 'granny';
             super(scene, x, y, 'granny-wake');
             this.behavior = [
+                'garden',
                 'kitchen',
+                'garden',
                 'bedroom1'
             ];
         } else if (entity === 'gamer') {
@@ -66,13 +69,13 @@ export class Entity extends Phaser.GameObjects.Sprite {
         this.xf = 0;
         this.yf = 0;
         this.t = 1000;
-
     }
 
     init() {
         this.cycles = 0;
         this.step = 0;
         this.wateredToday = true;
+        this.waterings = 0;
         this.t = 1000;
         this.steps = [];
     }
@@ -107,7 +110,7 @@ export class Entity extends Phaser.GameObjects.Sprite {
             let destNode = null;
             while (queue.length) {
                 let node = queue.shift();
-                if (node.room.type === destination) {
+                if (node.room.type === destination && node.parent) {
                     destNode = node;
                     break;
                 }
@@ -142,7 +145,7 @@ export class Entity extends Phaser.GameObjects.Sprite {
                 gy = destNode.y;
                 let path = [];
                 while (destNode.parent) {
-                    if (destNode.room.type === 'garden' && this.type === 'gamer') {
+                    if (destNode.room.type === 'garden' && actions[0] !== 'water' && (this.type === 'granny' || this.type === 'gamer')) {
                         path.unshift({
                             x: destNode.x,
                             y: destNode.y,
@@ -209,6 +212,12 @@ export class Entity extends Phaser.GameObjects.Sprite {
             } else if (step.action === 'water') {
                 this.anims.play(this.type + '-water');
                 this.wateredToday = true;
+                let garden = ba.get(this.gx, this.gy);
+                garden.waterings++;
+                if (garden.waterings > this.cycles + 1) {
+                    this.waterings += 2;
+                    console.log('overwatered!');
+                }
             } else if (step.action === 'sit') {
                 this.anims.play(this.type + '-sit');
             } else if (step.action === 'stand') {
@@ -217,6 +226,8 @@ export class Entity extends Phaser.GameObjects.Sprite {
                 this.anims.play(this.type + '-eat');
             } else if (step.action === 'move') {
                 this.anims.play(this.type + '-walk');
+            } else if (step.action === 'confusion') {
+                this.anims.play(this.type + '-confused');
             }
 
             if (step.action === 'confusion') {

@@ -96,16 +96,27 @@ export const levels = [
     },
     {
         init: function(scene) {
-
+            scene.add.existing(new AvailableRoom(scene, 925, 250, 'bedroom1', 'buffgranny', 1));
+            scene.add.existing(new AvailableRoom(scene, 1075, 250, 'garden', null, 2));
+            scene.add.existing(new AvailableRoom(scene, 925, 400, 'kitchen', null));
+            scene.add.existing(new AvailableRoom(scene, 1075, 400, 'hallway', null));
         },
         checkFailState: function(ba, entities) {
-
+            let granny = entities.getAt(0);
+            return granny.cycles >= 1 && granny.waterings > 2*granny.cycles;
         },
         checkSuccessState: function(ba, entities) {
-
+            let granny = entities.getAt(0);
+            return granny.cycles >= 2;
         },
-        intro: [],
-        failure: [],
-        success: []
+        intro: [
+            'level1-intro1'
+        ],
+        failure: [
+            'level1-failure1'
+        ],
+        success: [
+            'level1-success1'
+        ]
     }
 ]

@@ -49,6 +49,10 @@ export class LoadScene extends Phaser.Scene {
             frameWidth: 128,
             frameHeight: 128
         });
+        this.load.spritesheet('gamer-confused', 'assets/gamergirl/confused.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
         this.load.spritesheet('gamer-sit', 'assets/gamergirl/fortnite.png', {
             frameWidth: 128,
             frameHeight: 128
@@ -79,6 +83,10 @@ export class LoadScene extends Phaser.Scene {
             frameWidth: 128,
             frameHeight: 128
         });
+        this.load.spritesheet('granny-confused', 'assets/granny/confusion.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
         this.load.spritesheet('granny-water', 'assets/granny/garden.png', {
             frameWidth: 128,
             frameHeight: 128
@@ -98,6 +106,10 @@ export class LoadScene extends Phaser.Scene {
         
         
         this.load.spritesheet('husband1-eat', 'assets/H1/eat.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+        this.load.spritesheet('husband1-confused', 'assets/H1/confusion.png', {
             frameWidth: 128,
             frameHeight: 128
         });
@@ -123,6 +135,10 @@ export class LoadScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('husband2-eat', 'assets/H2/eat.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+        this.load.spritesheet('husband2-confused', 'assets/H2/confusion.png', {
             frameWidth: 128,
             frameHeight: 128
         });
@@ -171,6 +187,11 @@ export class LoadScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('granny-eat'),
             frameRate: 14
         });
+        this.anims.create({
+            key: 'granny-confused',
+            frames: this.anims.generateFrameNumbers('granny-confused'),
+            frameRate: 14
+        });
 
 
         this.anims.create({
@@ -209,6 +230,11 @@ export class LoadScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('gamer-stand', {end: 14}),
             frameRate: 14
         });
+        this.anims.create({
+            key: 'gamer-confused',
+            frames: this.anims.generateFrameNumbers('gamer-confused'),
+            frameRate: 14
+        });
 
 
         this.anims.create({
@@ -242,6 +268,11 @@ export class LoadScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('husband1-stand', {end: 14}),
             frameRate: 14
         });
+        this.anims.create({
+            key: 'husband1-confused',
+            frames: this.anims.generateFrameNumbers('husband1-confused'),
+            frameRate: 14
+        });
 
 
 
@@ -271,8 +302,13 @@ export class LoadScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('husband2-eat'),
             frameRate: 14
         });
+        this.anims.create({
+            key: 'husband2-confused',
+            frames: this.anims.generateFrameNumbers('husband2-confused'),
+            frameRate: 14
+        });
 
-        game.level = 0;
+        game.level = 3;
         this.scene.start('TitleScene');
     }
 }

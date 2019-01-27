@@ -87,6 +87,9 @@ export class MainScene extends Phaser.Scene {
         }, this);
         if (mode === 'playbackMode') {
             this.button.setFrame(1);
+            this.backgrounds.each(function(background) {
+                background.room.waterings = 0;
+            }, this);
             this.entities.each(function(entity) {
                 entity.init();
             }, this);

@@ -96,6 +96,8 @@ class Room {
         this.y = y;
         this.gx = null;
         this.gy = null;
+        this.waterings = 0;
+        this.background.room = this;
     }
 
     moveTo(x, y) {
