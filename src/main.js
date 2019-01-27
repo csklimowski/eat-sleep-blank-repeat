@@ -5,22 +5,13 @@ import { AvailableRoom } from './room';
 import { BuildingArea } from './buildingArea';
 
 export class MainScene extends Phaser.Scene {
-    preload() {
-        this.load.image('hallway', 'assets/hallway.png');
-        this.load.image('bedroom', 'assets/bedroom.png');
-        this.load.image('bathroom', 'assets/bathroom.png');
-        this.load.image('room', 'assets/room.png');
-        this.load.image('highlight', 'assets/highlight.png');
-        this.load.spritesheet('person', 'assets/person.png', {
-            frameWidth: 64,
-            frameHeight: 64
-        });
-        this.load.spritesheet('button', 'assets/button.png', {
-            frameWidth: 128,
-            frameHeight: 64
+
+    constructor() {
+        super({
+            key: 'MainState'
         });
     }
-
+    
     create() {
         this.ba = new BuildingArea(100, 0);
         this.holding = null;
@@ -29,16 +20,17 @@ export class MainScene extends Phaser.Scene {
 
         this.mode = 'buildMode';
 
-        this.rooms = this.add.container(0, 0);
+        this.backgrounds = this.add.container(0, 0);
         this.entities = this.add.container(0, 0);
+        this.foregrounds = this.add.container(0, 0);
         this.highlight = this.add.sprite(0, 0, 'highlight');
         this.button = this.add.sprite(1100, 50, 'button');
         this.button.setInteractive();
         this.button.on('pointerdown', this.switchModes, this);
 
-        this.add.existing(new AvailableRoom(this, 1000, 200, 'hallway', null, 2));
-        this.add.existing(new AvailableRoom(this, 1000, 400, 'bedroom1', 'person', 2));
-        this.add.existing(new AvailableRoom(this, 1000, 600, 'bathroom', null, 2));
+        this.add.existing(new AvailableRoom(this, 1000, 200, 'hallway', null));
+        this.add.existing(new AvailableRoom(this, 1000, 400, 'bedroom1', 'person', 1));
+        this.add.existing(new AvailableRoom(this, 1000, 600, 'kitchen', null, 1));
 
         this.cameras.main.setBackgroundColor(0x444444);
     }
@@ -49,6 +41,8 @@ export class MainScene extends Phaser.Scene {
             entity.gy = entity.room.gy;
             entity.x = entity.room.x;
             entity.y = entity.room.y;
+            entity.room.foreground.setFrame(0);
+            entity.room.background.setFrame(0);
         }, this);
         if (this.mode === 'buildMode') {
             this.button.setFrame(1);

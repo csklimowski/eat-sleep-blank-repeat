@@ -3,45 +3,79 @@ import { Entity } from './entity';
 export class AvailableRoom {
     constructor(scene, x, y, type, entity, count) {
         if (type === 'hallway') {
-            this.background = scene.add.sprite(x, y, 'hallway');
+            this.background = scene.add.sprite(x, y, 'hallway-bg');
+            this.foreground = scene.add.sprite(x, y, 'hallway-fg');
         } else if (type === 'bedroom1' || type === 'bedroom2') {
-            this.background = scene.add.sprite(x, y, 'bedroom');
-        } else if (type === 'bathroom') {
-            this.background = scene.add.sprite(x, y, 'bathroom');
+            this.background = scene.add.sprite(x, y, 'bedroom-bg');
+            this.foreground = scene.add.sprite(x, y, 'bedroom-fg');
+            this.background.setFrame(1);
+            this.foreground.setFrame(1);
+        } else if (type === 'kitchen') {
+            this.background = scene.add.sprite(x, y, 'kitchen');
+            this.foreground = scene.add.sprite(x, y, 'kitchen');
         }
         if (entity) {
-            this.entity = scene.add.existing(new Entity(scene, this, x, y, entity));
+            this.entity = entity;
+        }
+        if (count) {
+            this.counter = scene.add.text(x, y, String(count), {
+                fontFamily: 'Arial', fontSize: 64, color: '#ffffff'
+            });
+            this.count = count;
         } else {
-            this.entity = null;
+            this.count = null;
         }
         this.scene = scene;
         this.background.setInteractive();
         this.type = type;
-        this.count = count;
         this.background.on('pointerdown', function(pointer) {
-            if (this.scene.mode === 'buildMode') {
-                this.scene.holding = new Room(this.scene, pointer.worldX, pointer.worldY, this.type, this.entity);
+            if (this.scene.mode === 'buildMode' && !this.scene.holding) {
+                if (this.count !== 0) {
+                    this.scene.holding = new Room(this.scene, pointer.worldX, pointer.worldY, this.type, this.entity, this);
+                    this.decreaseCounter();
+                }
             }
         }, this);
+    }
+
+    increaseCounter() {
+        if (this.count !== null) {
+            this.count++;
+            this.counter.text = this.count;
+        }
+    }
+
+    decreaseCounter() {
+        if (this.count !== null) {
+            this.count--;
+            this.counter.text = this.count;
+        }
     }
 }
 
 class Room {
-    constructor(scene, x, y, type, entity) {
+    constructor(scene, x, y, type, entity, supply) {
         this.type = type;
         if (type === 'hallway') {
-            this.background = scene.add.sprite(x, y, 'hallway');
+            this.background = scene.add.sprite(x, y, 'hallway-bg');
+            this.foreground = scene.add.sprite(x, y, 'hallway-fg');
         } else if (type === 'bedroom1' || type === 'bedroom2') {
-            this.background = scene.add.sprite(x, y, 'bedroom');
-        } else if (type === 'bathroom') {
-            this.background = scene.add.sprite(x, y, 'bathroom');
+            this.background = scene.add.sprite(x, y, 'bedroom-bg');
+            this.foreground = scene.add.sprite(x, y, 'bedroom-fg');
+        } else if (type === 'kitchen') {
+            this.background = scene.add.sprite(x, y, 'kitchen');
+            this.foreground = scene.add.sprite(x, y, 'blank-room');
         }
-        scene.rooms.add(this.background);
+        scene.backgrounds.add(this.background);
+        scene.foregrounds.add(this.foreground);
         if (entity) {
-            this.entity = scene.add.existing(new Entity(scene, this, x, y, 'person'));
+            this.entity = scene.add.existing(new Entity(scene, this, x, y, entity));
             scene.entities.add(this.entity);
         } else {
             this.entity = null;
+        }
+        if (supply) {
+            this.supply = supply;
         }
         this.x = x;
         this.y = y;
@@ -54,6 +88,8 @@ class Room {
         this.y = y;
         this.background.x = x;
         this.background.y = y;
+        this.foreground.x = x;
+        this.foreground.y = y;
         if (this.entity) {
             this.entity.x = x;
             this.entity.y = y;
@@ -62,8 +98,12 @@ class Room {
 
     destroy() {
         this.background.destroy();
+        this.foreground.destroy();
         if (this.entity) {
             this.entity.destroy();
+        }
+        if (this.supply) {
+            this.supply.increaseCounter();
         }
     }
 }

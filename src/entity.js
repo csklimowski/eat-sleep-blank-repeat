@@ -4,7 +4,7 @@ export class Entity extends Phaser.GameObjects.Sprite {
         super(scene, x, y, entity);
         if (entity === 'person') {
             this.behavior = [
-                'bathroom',
+                'kitchen',
                 'bedroom1'
             ];
         }
@@ -41,10 +41,13 @@ export class Entity extends Phaser.GameObjects.Sprite {
             }
         }
         this.t = 1000;
-        this.steps = [];
-        this.step = 0;
-        let good = true;
         let gx = this.gx, gy = this.gy;
+        let good = true;
+        this.steps = [{
+            x: gx, y: gy,
+            action: 'wake'
+        }];
+        this.step = 0;
         for (let destination of this.behavior) {
             let notes = [
                 [false, false, false, false, false],
@@ -85,6 +88,10 @@ export class Entity extends Phaser.GameObjects.Sprite {
                 }
             }
             if (destNode) {
+                let actions = [];
+                if (destNode.room.type === 'bedroom1' || destNode.room.type === 'bedroom2') {
+                    actions = ['sleep'];
+                }
                 gx = destNode.x;
                 gy = destNode.y;
                 let path = [];
@@ -96,7 +103,14 @@ export class Entity extends Phaser.GameObjects.Sprite {
                     });
                     destNode = destNode.parent;
                 }
+                for (let action of actions) {
+                    path.push({
+                        x: gx, y: gy,
+                        action: action
+                    });
+                }
                 this.steps = this.steps.concat(path);
+                
             } else {
                 good = false;
                 break;
@@ -115,6 +129,18 @@ export class Entity extends Phaser.GameObjects.Sprite {
             this.xf = ba.worldX(step.x);
             this.yf = ba.worldY(step.y);
             this.t = 0;
+
+            if (step.action === 'sleep') {
+                this.setFrame(1);
+                this.room.background.setFrame(0);
+                this.room.foreground.setFrame(0);
+            } else if (step.action === 'wake') {
+                this.setFrame(0);
+                this.room.background.setFrame(1);
+                this.room.foreground.setFrame(1);
+            } else {
+                this.setFrame(0);
+            }
 
             this.step = (this.step + 1) % this.steps.length;
         }
