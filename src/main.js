@@ -1,123 +1,118 @@
 import 'phaser';
 import game from './index';
+import { Entity } from './entity';
+import { AvailableRoom } from './room';
+import { BuildingArea } from './buildingArea';
 
 export class MainScene extends Phaser.Scene {
     preload() {
+        this.load.image('hallway', 'assets/hallway.png');
+        this.load.image('bedroom', 'assets/bedroom.png');
+        this.load.image('bathroom', 'assets/bathroom.png');
         this.load.image('room', 'assets/room.png');
-    }
-    create() {
-        this.ba = new BuildingArea(0, 0);
-        this.holding = null;
-        this.input.on('pointerup', function() {
-            if (this.holding) {
-                this.ba.drop(this.holding);
-                this.holding = null;
-            }
-        }, this);
-
-        this.input.on('pointerdown', function(pointer) {
-            if (this.ba.inBounds(pointer.worldX, pointer.worldY)) {
-                this.holding = this.ba.grab(pointer.worldX, pointer.worldY);
-            }
-        }, this)
-        
-
-        this.room = this.add.existing(new AvailableRoom(this, 800, 500, 'room', 2));
-
-        this.graphics = this.add.graphics({
-            lineStyle: {
-                width: 1,
-                color: 0x00ff00
-            }
+        this.load.image('highlight', 'assets/highlight.png');
+        this.load.spritesheet('person', 'assets/person.png', {
+            frameWidth: 64,
+            frameHeight: 64
         });
-        this.cameras.main.setBackgroundColor(0x006698);
+        this.load.spritesheet('button', 'assets/button.png', {
+            frameWidth: 128,
+            frameHeight: 64
+        });
+    }
+
+    create() {
+        this.ba = new BuildingArea(100, 0);
+        this.holding = null;
+        this.input.on('pointerup', this.pointerUp, this);
+        this.input.on('pointerdown', this.pointerDown, this);
+
+        this.mode = 'buildMode';
+
+        this.rooms = this.add.container(0, 0);
+        this.entities = this.add.container(0, 0);
+        this.highlight = this.add.sprite(0, 0, 'highlight');
+        this.button = this.add.sprite(1100, 50, 'button');
+        this.button.setInteractive();
+        this.button.on('pointerdown', this.switchModes, this);
+
+        this.add.existing(new AvailableRoom(this, 1000, 200, 'hallway', null, 2));
+        this.add.existing(new AvailableRoom(this, 1000, 400, 'bedroom1', 'person', 2));
+        this.add.existing(new AvailableRoom(this, 1000, 600, 'bathroom', null, 2));
+
+        this.cameras.main.setBackgroundColor(0x444444);
+    }
+
+    switchModes() {
+        this.entities.each(function(entity) {
+            entity.gx = entity.room.gx;
+            entity.gy = entity.room.gy;
+            entity.x = entity.room.x;
+            entity.y = entity.room.y;
+        }, this);
+        if (this.mode === 'buildMode') {
+            this.button.setFrame(1);
+            this.mode = 'playbackMode';
+            this.entities.each(function(entity) {
+                entity.makeSteps(this.ba);
+            }, this);
+            this.stepLoop = this.time.addEvent({
+                callback: this.step,
+                delay: 500,
+                callbackScope: this,
+                loop: true
+            });
+        } else {
+            this.button.setFrame(0);
+            this.stepLoop.destroy();
+            this.mode = 'buildMode';
+        }
+    }
+
+    step() {
+        this.entities.each(function(entity) {
+            entity.nextStep(this.ba);
+        }, this);
     }
 
     update(time, delta) {
+        this[this.mode](time, delta);
+    }
+
+    pointerDown(pointer) {
+        if (this.mode === 'buildMode' && !this.holding && this.ba.inBounds(pointer.worldX, pointer.worldY)) {
+            this.holding = this.ba.grab(pointer.worldX, pointer.worldY);
+        }
+    }
+
+    pointerUp(pointer) {
+        if (this.mode === 'buildMode' && this.holding) {
+            this.ba.drop(this.holding);
+            this.holding = null;
+        }
+    }
+
+    buildMode(time, delta) {
         let mouseX = this.input.activePointer.worldX;
         let mouseY = this.input.activePointer.worldY;
         let ba = this.ba;
 
         if (this.holding) {
-            this.holding.x = mouseX;
-            this.holding.y = mouseY;
+            this.holding.moveTo(mouseX, mouseY);
         }
 
-        this.graphics.clear();
         if (ba.inBounds(mouseX, mouseY)) {
-            this.graphics.strokeRect(ba.floorX(mouseX), ba.floorY(mouseY), 128, 128);
-        }
-    }
-}
-
-class AvailableRoom extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, type, count) {
-        super(scene, x, y, type);
-        this.setInteractive();
-        this.type = type;
-        this.on('pointerdown', function(pointer) {
-            this.scene.holding = this.scene.add.existing(new BuildRoom(this.scene, pointer.worldX, pointer.worldY, this.type));
-        }, this);
-    }
-}
-
-class BuildRoom extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, type) {
-        super(scene, x, y, type);
-    }
-}
-
-class BuildingArea {
-    constructor(x, y) {
-        this.array = [
-            [null, null, null, null],
-            [null, null, null, null],
-            [null, null, null, null],
-            [null, null, null, null]
-        ];
-        this.x = x;
-        this.y = y;
-    }
-
-    inBounds(x, y) {
-        return (
-            (x > this.x) &&
-            (x < this.x + 512) &&
-            (y > this.y) &&
-            (y < this.y + 512)
-        );
-    }
-
-    floorX(x) { return Math.floor((x - this.x) / 128)*128; }
-    floorY(y) { return Math.floor((y - this.y) / 128)*128; }
-    midX(x) { return Math.floor((x - this.x) / 128)*128 + 64; }
-    midY(y) { return Math.floor((y - this.y) / 128)*128 + 64; }
-    gridX(x) { return Math.floor((x - this.x)/128); }
-    gridY(y) { return Math.floor((y - this.y)/128); }
-    under(x, y) { return this.get(this.gridX(x), this.gridY(y)); }
-    drop(room) {
-        if (this.inBounds(room.x, room.y)) {
-            room.x = this.midX(room.x);
-            room.y = this.midY(room.y);
-            let gx = this.gridX(room.x);
-            let gy = this.gridY(room.y);
-            if (this.array[gx][gy]) this.array[gx][gy].destroy();
-            this.array[gx][gy] = room;
+            this.highlight.alpha = 1;
+            this.highlight.x = ba.midX(mouseX);
+            this.highlight.y = ba.midY(mouseY);
         } else {
-            room.destroy();
+            this.highlight.alpha = 0;
         }
     }
-    grab(x, y) {
-        if (this.inBounds(x, y)) {
-            let gx = this.gridX(x);
-            let gy = this.gridY(y);
-            let room = this.array[gx][gy];
-            this.array[gx][gy] = null;
-            return room;
-        }
-    }
-    get(x, y) {
-        if (x >= 0 && x <= 4 && y >= 0 && y <= 4) return this.array[x][y];
-        else return null;
+
+    playbackMode(time, delta) {
+        this.entities.each(function(entity) {
+            entity.update(time, delta);
+        }, this);
     }
 }
